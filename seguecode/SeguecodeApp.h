@@ -13,4 +13,6 @@
 @property (readwrite, assign) NSString *outputDir;
 @property (readwrite, assign) NSString *constPrefix;
 
++ (BOOL)useVerboseOutput;
+
 @end

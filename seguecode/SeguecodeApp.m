@@ -17,15 +17,29 @@
 
 #define SegueCodeAppVersion @"1.0"
 
+// HACK: TODO: do proper singleton ref
+static SeguecodeApp *lastInstance;
+
 @interface SeguecodeApp ()
 {
     BOOL _help;
     BOOL _version;
+    BOOL _verbose;
 }
 
 @end
 
 @implementation SeguecodeApp
+
+- (id)init
+{
+    self = [super init];
+    if (self)
+    {
+        lastInstance = self;
+    }
+    return self;
+}
 
 - (void)application:(DDCliApplication *)app willParseOptions:(DDGetoptLongParser *)optionsParser
 {
@@ -37,7 +51,8 @@
         {"const-prefix",   'p',    DDGetoptOptionalArgument},
         
         {"help",       'h',    DDGetoptNoArgument},
-        {"version",    'v',    DDGetoptNoArgument},
+        {"version",    0,    DDGetoptNoArgument},
+        {"verbose",   'v',    DDGetoptNoArgument},
         {nil,           0,      0},
     };
     [optionsParser addOptionsFromTable: optionTable];
@@ -48,7 +63,8 @@
     ddprintf(@"%@: Usage [OPTIONS] <argument> first.storyboard [second.storyboard...]\n", DDCliApp);
     ddprintf(@"  -o, --output-dir DIR         Output directory\n"
 //           @"  -p, --const-prefix PREFIX    Prefix to prepend to constant names\n"
-             @"  -v, --version                Display version and exit\n"
+             @"  --version                    Display version and exit\n"
+             @"  -v, --verbose                Display additional debugging information\n"
              @"  -h, --help                   Display this help and exit\n");
 }
 
@@ -114,6 +130,16 @@
     }];
     
     return error;
+}
+
++ (BOOL)useVerboseOutput
+{
+    BOOL result = NO;
+    if (lastInstance)
+    {
+        result = lastInstance->_verbose;
+    }
+    return result;
 }
 
 @end
