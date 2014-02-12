@@ -18,6 +18,9 @@
 
 #import <TypeForKey/NSDictionary+TypeForKey.h>
 
+#import <ddcli/DDCliUtil.h>
+#import "SeguecodeApp.h"
+
 @interface ViewControllerDefinition ()
 {
     NSMutableDictionary *_segues;
@@ -43,6 +46,7 @@
         }
     } else
     {
+        ddprintf(@"Error: attempt to create a View Controller Definition without XML\n");
         self = nil;
     }
     return self;
@@ -56,9 +60,18 @@
 - (void)parseSegues
 {
     _segues = [NSMutableDictionary dictionary];
-    
+
+    if ( [SeguecodeApp useVerboseOutput] )
+    {
+        ddprintf(@"Parsing segues for %@\n", self.storyboardIdentifier);
+    }
+
     [_element iterate:@"connections" usingBlock:^(RXMLElement *connections)
     {
+        if ( [SeguecodeApp useVerboseOutput] )
+        {
+            ddprintf(@"%d segue(s) found\n", [_element children:@"connections"].count);
+        }
         [connections iterate:@"segue" usingBlock:^(RXMLElement *segue)
         {
             SegueDefinition *definition = [SegueDefinition definitionFrom:segue andSource:self];

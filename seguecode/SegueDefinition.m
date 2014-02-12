@@ -16,6 +16,8 @@
 
 #import "HeaderTemplate.h"
 
+#import <ddcli/DDCliUtil.h>
+
 @interface SegueDefinition ()
 
 @property (strong) RXMLElement *element;
@@ -39,6 +41,7 @@
         }
     } else
     {
+        ddprintf(@"Error: attempt to create a Segue Definition without XML\n");
         self = nil;
     }
     return self;
